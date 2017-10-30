@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>SignalR Samples</title>
+    <script src="signalr-client-1.0.0-alpha2-final.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded',
+            function() {
+                let connection = new signalR.HubConnection('/console');
+                connection.on('Stdout',
+                    data => {
+                        console.log(data);
+
+                        let child = document.createElement('span');
+                        child.innerText = data;
+                        document
+                            .getElementById('messages')
+                            .appendChild(child)
+                            .appendChild(document.createElement('br'));
+                    });
+
+                connection.on('Stderr',
+                    data => {
+                        console.log(data);
+
+                        let child = document.createElement('span');
+                        child.innerText = data;
+                        child.setAttribute("style", "color:red");
+                        document
+                            .getElementById('messages')
+                            .appendChild(child)
+                            .appendChild(document.createElement('br'));
+                    });
+
+                document.getElementById('sendcommand').addEventListener('submit', event => {
+                    let data = document.getElementById('data').value;
+                    connection.invoke('stdin', data);
+                    event.preventDefault();
+                });
+
+                connection.start();
+            });
+    </script>
+</head>
+<body>
+
+    <div id="messages" style="font-family: consolas; background: black; color:white"></div>
+
+    <form id="sendcommand">
+        <input type="text" id="data" />
+        <input type="submit" value="Send" />
+    </form>
+
+</body>
+</html>
