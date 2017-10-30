@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>SignalR Samples</title>
+    <title>Remote Web Console Demo</title>
     <script src="signalr-client-1.0.0-alpha2-final.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded',
@@ -36,6 +36,7 @@
                 document.getElementById('sendcommand').addEventListener('submit', event => {
                     let data = document.getElementById('data').value;
                     connection.invoke('stdin', data);
+                    document.getElementById('data').value = '';
                     event.preventDefault();
                 });
 
@@ -45,7 +46,7 @@
 </head>
 <body>
 
-    <div id="messages" style="font-family: consolas; background: black; color:white"></div>
+    <div id="messages" style="font-family: consolas; background: black; color:white" onclick="document.getElementById('data').focus(); return false;"></div>
 
     <form id="sendcommand">
         <input type="text" id="data" />
