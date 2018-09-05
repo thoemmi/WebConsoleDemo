@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "defaultProvider": "npm",
+  "libraries": [
+    {
+      "provider": "filesystem",
+      "library": "node_modules/@aspnet/signalr/dist/browser",
+      "files": ["signalr.js", "signalr.js.map"],
+      "destination": "wwwroot/js"
+    }
+  ]
+}

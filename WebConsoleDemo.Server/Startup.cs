@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace WebConsoleDemo.Server {
     public class Startup {
         public void ConfigureServices(IServiceCollection services) {
+            services.AddLogging();
             services.AddSignalR();
         }
 
@@ -15,7 +16,7 @@ namespace WebConsoleDemo.Server {
 
             app.UseFileServer();
 
-            app.UseSignalR(routes => { routes.MapHub<Console>("console"); });
+            app.UseSignalR(routes => { routes.MapHub<Console>("/console"); });
         }
     }
 }

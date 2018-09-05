@@ -3,16 +3,19 @@
 <head>
     <meta charset="utf-8"/>
     <title>Remote Web Console Demo</title>
-    <script src="signalr-client-1.0.0-alpha2-final.min.js"></script>
+    <script src="js/signalr.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded',
             function() {
-                let connection = new signalR.HubConnection('/console');
+                var connection = new signalR.HubConnectionBuilder()
+                    .withUrl("/console")
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
                 connection.on('Stdout',
                     data => {
                         console.log(data);
 
-                        let child = document.createElement('span');
+                        var child = document.createElement('span');
                         child.innerText = data;
                         document
                             .getElementById('messages')
@@ -24,7 +27,7 @@
                     data => {
                         console.log(data);
 
-                        let child = document.createElement('span');
+                        var child = document.createElement('span');
                         child.innerText = data;
                         child.setAttribute("style", "color:red");
                         document
@@ -34,7 +37,7 @@
                     });
 
                 document.getElementById('sendcommand').addEventListener('submit', event => {
-                    let data = document.getElementById('data').value;
+                    var data = document.getElementById('data').value;
                     connection.invoke('stdin', data);
                     document.getElementById('data').value = '';
                     event.preventDefault();
@@ -46,12 +49,12 @@
 </head>
 <body>
 
-    <div id="messages" style="font-family: consolas; background: black; color:white" onclick="document.getElementById('data').focus(); return false;"></div>
+<div id="messages" style="font-family: consolas; background: black; color:white" onclick="document.getElementById('data').focus(); return false;"></div>
 
-    <form id="sendcommand">
-        <input type="text" id="data" />
-        <input type="submit" value="Send" />
-    </form>
+<form id="sendcommand">
+    <input type="text" id="data" />
+    <input type="submit" value="Send" />
+</form>
 
 </body>
 </html>

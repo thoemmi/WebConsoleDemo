@@ -1,12 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LibraryRestore>True</LibraryRestore>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha2-final" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="1.0.163" />
   </ItemGroup>
+
+  <!-- restore NPM packages on build -->
+  <PropertyGroup>
+    <!-- File with mtime of last successful npm install -->
+    <NpmInstallStampFile>node_modules/.install-stamp</NpmInstallStampFile>
+  </PropertyGroup>
+  <Target Name="NpmInstall"
+          BeforeTargets="BeforeBuild"
+          Inputs="package.json"
+          Outputs="$(NpmInstallStampFile)">
+    <Message Text="Restoring NPM packages" Importance="High" />
+    <Exec Command="npm ci" />
+    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
+  </Target>
 
 </Project>

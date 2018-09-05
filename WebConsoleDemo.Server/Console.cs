@@ -14,21 +14,21 @@ namespace WebConsoleDemo.Server {
             System.Console.WriteLine($"Stdout: {s}");
             _logger.LogInformation($"Stdout: {s}");
 
-            return Clients.All.InvokeAsync("Stdout", s);
+            return Clients.All.SendAsync("Stdout", s);
         }
 
         public Task Stderr(string s) {
             System.Console.WriteLine($"Stderr: {s}");
             _logger.LogWarning($"Stderr: {s}");
 
-            return Clients.All.InvokeAsync("Stderr", s);
+            return Clients.All.SendAsync("Stderr", s);
         }
 
         public Task Stdin(string s) {
             System.Console.WriteLine($"Stdin: {s}");
             _logger.LogInformation($"Stdin: {s}");
 
-            return Clients.All.InvokeAsync("Stdin", s);
+            return Clients.All.SendAsync("Stdin", s);
         }
     }
 }

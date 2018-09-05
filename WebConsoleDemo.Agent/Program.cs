@@ -8,8 +8,6 @@ namespace WebConsoleDemo.Agent {
         private static async Task Main(string[] args) {
             var connection = new HubConnectionBuilder()
                 .WithUrl("http://localhost:5000/console")
-                .WithMessagePackProtocol()
-                .WithConsoleLogger()
                 .Build();
 
             var cts = new CancellationTokenSource();
