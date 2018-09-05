@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.SignalR.Client;
 namespace WebConsoleDemo.Agent {
     internal class Program {
         private static async Task Main(string[] args) {
-            var connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5000/console")
-                .Build();
-
             var cts = new CancellationTokenSource();
 
             Console.CancelKeyPress += (sender, e) => {
                 e.Cancel = true;
                 cts.Cancel();
             };
+
+            var connection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5000/agent")
+                .Build();
 
             connection.Closed += e => {
                 cts.Cancel();
@@ -24,19 +24,27 @@ namespace WebConsoleDemo.Agent {
 
             var cmd = new CmdWrapper();
 
-            connection.On<string>("Stdout", _ => { });
-            connection.On<string>("Stderr", _ => { });
-            connection.On<string>("Stdin", s => {
+            connection.On<string>("execute", s => {
                 if (!cmd.Started) {
                     cmd.Start(
-                        stdout => connection.InvokeAsync("Stdout", stdout).GetAwaiter().GetResult(),
-                        stderr => connection.InvokeAsync("Stderr", stderr).GetAwaiter().GetResult()
-                    );
+                        stdout => {
+                            Console.WriteLine(stdout);
+
+                            connection.InvokeAsync("Output", stdout, false).GetAwaiter().GetResult();
+                        },
+                        stderr => {
+                            var oldColor = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(stderr);
+                            Console.ForegroundColor = oldColor;
+
+                            connection.InvokeAsync("Output", stderr, true).GetAwaiter().GetResult();
+                        });
                 }
                 cmd.Write(s);
             });
 
-            await connection.StartAsync();
+            await connection.StartAsync(cts.Token);
 
             Console.WriteLine("Press Ctrl+C to exit");
             cts.Token.WaitHandle.WaitOne();
